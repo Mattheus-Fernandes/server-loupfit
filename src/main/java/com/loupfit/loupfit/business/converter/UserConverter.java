@@ -1,5 +1,6 @@
 package com.loupfit.loupfit.business.converter;
 
+import com.loupfit.loupfit.business.dto.LoginResDTO;
 import com.loupfit.loupfit.business.dto.UserDTO;
 import com.loupfit.loupfit.infrastructure.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,13 @@ public class UserConverter {
                 .username(userDTO.getUsername())
                 .password(userDTO.getPassword())
                 .role(userDTO.getRole())
+                .build();
+    }
+
+    public LoginResDTO loginResDTO(UserDTO userDTO) {
+        return LoginResDTO.builder()
+                .id(userDTO.getId())
+                .username(userDTO.getUsername())
                 .build();
     }
 }
