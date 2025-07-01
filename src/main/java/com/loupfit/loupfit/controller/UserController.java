@@ -1,6 +1,8 @@
 package com.loupfit.loupfit.controller;
 
 import com.loupfit.loupfit.business.UserService;
+import com.loupfit.loupfit.business.dto.LoginReqDTO;
+import com.loupfit.loupfit.business.dto.LoginResDTO;
 import com.loupfit.loupfit.business.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,5 +21,10 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDTO> saveUser(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.registerUser(userDTO));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResDTO> loginUser(@RequestBody LoginReqDTO loginReqDTO) {
+        return ResponseEntity.ok(userService.loginUser(loginReqDTO));
     }
 }
