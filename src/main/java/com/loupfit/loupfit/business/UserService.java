@@ -16,7 +16,7 @@ public class UserService {
     private final UserConverter userConverter;
 
     public UserDTO registerUser(UserDTO userDTO) {
-        existNickname(userDTO);
+        existUsername(userDTO);
 
         User newUser = userConverter.userEntity(userDTO);
 
@@ -24,7 +24,7 @@ public class UserService {
 
     }
 
-    public void existNickname(UserDTO userDTO) {
+    public void existUsername(UserDTO userDTO) {
         try {
             boolean exist = userRepository.existsByUsername(userDTO.getUsername());
 
