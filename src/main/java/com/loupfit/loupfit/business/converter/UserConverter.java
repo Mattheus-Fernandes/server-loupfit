@@ -16,7 +16,6 @@ public class UserConverter {
 
     public UserDTO userDTO(User user) {
         return UserDTO.builder()
-                .id(user.getId())
                 .name(user.getName())
                 .lastname(user.getLastname())
                 .username(user.getUsername())
