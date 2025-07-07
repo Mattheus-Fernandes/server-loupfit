@@ -41,4 +41,11 @@ public class UserController {
 
         return ResponseEntity.ok(userService.filterUsers(name, username, role));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> findUserById(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(userService.filterUserById(id));
+    }
 }
