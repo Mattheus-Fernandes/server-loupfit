@@ -1,6 +1,5 @@
 package com.loupfit.loupfit.business.dto;
 
-
 import lombok.*;
 
 @Getter
@@ -8,11 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+public class LoginReqDTO {
 
-public class UserDTO {
-
-    private String name;
-    private String lastname;
     private String username;
-    private Long role;
+    private String password;
 }
