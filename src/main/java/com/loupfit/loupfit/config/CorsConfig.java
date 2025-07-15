@@ -22,6 +22,11 @@ public class CorsConfig {
                         .allowedOrigins("http://localhost:4200")
                         .allowedMethods("POST")
                         .allowedHeaders("*");
+
+                registry.addMapping("/user/{id}")
+                        .allowedOrigins("http://localhost:4200")
+                        .allowedMethods("GET")
+                        .allowedHeaders("*");
             }
         };
     }

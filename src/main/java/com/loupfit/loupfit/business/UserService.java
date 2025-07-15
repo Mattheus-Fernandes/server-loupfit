@@ -67,6 +67,15 @@ public class UserService {
         return userConverter.userDTOList(users);
     }
 
+    public UserDTO filterUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ConflictException("Usuário não encontrado")
+        );
+
+        return  userConverter.userDTO(user);
+    }
+
+
     public List<UserDTO> filterUsers(String name, String username, Long role) {
 
         List<User> users = new ArrayList<User>();
