@@ -49,6 +49,7 @@ public class UserConverter {
         return LoginResDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
+                .role(user.getRole())
                 .build();
     }
 }

@@ -11,4 +11,5 @@ public class LoginResDTO {
 
     private Long id;
     private String username;
+    private Long role;
 }
