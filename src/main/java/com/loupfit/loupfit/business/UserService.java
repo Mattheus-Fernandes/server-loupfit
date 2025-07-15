@@ -83,4 +83,19 @@ public class UserService {
 
         return userConverter.userDTOList(users);
     }
+
+    public UserDTO deleteUser(Long role, Long id) {
+
+        if (role != 1) {
+            throw new ConflictException("Você não tem permissão para excluir usuário");
+        }
+
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ConflictException("Usuário não encontrado")
+        );
+
+        userRepository.deleteById(user.getId());
+
+        return userConverter.userDTO(user);
+    }
 }
