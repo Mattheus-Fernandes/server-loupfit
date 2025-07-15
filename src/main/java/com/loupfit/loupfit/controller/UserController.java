@@ -48,4 +48,12 @@ public class UserController {
     ) {
         return ResponseEntity.ok(userService.filterUserById(id));
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<UserDTO> deleteUser(
+            @PathVariable Long id,
+            @RequestHeader("X-User-Role") Long role
+    ) {
+        return ResponseEntity.ok(userService.deleteUser(role, id));
+    }
 }
