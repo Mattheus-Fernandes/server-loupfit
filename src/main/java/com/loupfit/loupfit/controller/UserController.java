@@ -49,11 +49,20 @@ public class UserController {
         return ResponseEntity.ok(userService.filterUserById(id));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<UserDTO> deleteUser(
             @PathVariable Long id,
             @RequestHeader("X-User-Role") Long role
     ) {
         return ResponseEntity.ok(userService.deleteUser(role, id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> updateUser(
+            @RequestHeader("X-User-Role") Long role,
+            @PathVariable Long id,
+            @RequestBody RegisterReqDTO userDTO
+    ) {
+        return ResponseEntity.ok(userService.updateUser(role, id, userDTO));
     }
 }
