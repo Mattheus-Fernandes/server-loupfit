@@ -46,15 +46,15 @@ public class UserService {
     public LoginResDTO loginUser(LoginReqDTO loginReqDTO) {
 
         try {
-           User user = userRepository.findByUsername(loginReqDTO.getUsername()).orElseThrow(
-                   () -> new ConflictException("Usuário não encontrado")
-           );
+            User user = userRepository.findByUsername(loginReqDTO.getUsername()).orElseThrow(
+                    () -> new ConflictException("Usuário não encontrado")
+            );
 
-           if (!user.getPassword().equals(loginReqDTO.getPassword())) {
-               throw new ConflictException("Senha incorreta");
-           }
+            if (!user.getPassword().equals(loginReqDTO.getPassword())) {
+                throw new ConflictException("Senha incorreta");
+            }
 
-           return userConverter.loginResDTO(user);
+            return userConverter.loginResDTO(user);
 
         } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
@@ -72,7 +72,7 @@ public class UserService {
                 () -> new ConflictException("Usuário não encontrado")
         );
 
-        return  userConverter.userDTO(user);
+        return userConverter.userDTO(user);
     }
 
 
@@ -106,5 +106,21 @@ public class UserService {
         userRepository.deleteById(user.getId());
 
         return userConverter.userDTO(user);
+    }
+
+    public UserDTO updateUser(Long role, Long id, RegisterReqDTO userDTO) {
+
+        if (role != 1) {
+            throw new ConflictException("Você não tem permissão para editar usuário");
+        }
+
+        User userEntity = userRepository.findById(id).orElseThrow(
+                () -> new ConflictException("Usuário não encontrado")
+        );
+
+        User user = userConverter.updateUser(userDTO, userEntity);
+
+        return userConverter.userDTO(userRepository.save(user));
+
     }
 }
