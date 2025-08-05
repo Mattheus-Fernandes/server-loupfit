@@ -1,0 +1,31 @@
+package com.loupfit.loupfit.infrastructure.security;
+
+import com.loupfit.loupfit.infrastructure.entity.User;
+import com.loupfit.loupfit.infrastructure.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    // Repositório para acessar dados de usuário no banco de dados
+    @Autowired
+    private UserRepository userRepository;
+
+    // Implementação do método para carregar detalhes do usuário pelo e-mail
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + username));
+
+
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .build();
+    }
+}
