@@ -9,6 +9,9 @@ import com.loupfit.loupfit.infrastructure.entity.User;
 import com.loupfit.loupfit.infrastructure.exceptions.ConflictException;
 import com.loupfit.loupfit.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,14 +23,19 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserConverter userConverter;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDTO registerUser(RegisterReqDTO registerReqDTO) {
-        existUsername(registerReqDTO);
+        try {
+            existUsername(registerReqDTO);
+            registerReqDTO.setPassword(passwordEncoder.encode(registerReqDTO.getPassword()));
 
-        User newUser = userConverter.userEntity(registerReqDTO);
+            User newUser = userConverter.userEntity(registerReqDTO);
 
-        return userConverter.userDTO(userRepository.save(newUser));
-
+            return userConverter.userDTO(userRepository.save(newUser));
+        } catch (ConflictException e) {
+            throw new ConflictException(e.getMessage());
+        }
     }
 
     public void existUsername(RegisterReqDTO registerReqDTO) {
@@ -35,7 +43,7 @@ public class UserService {
             boolean exist = userRepository.existsByUsername(registerReqDTO.getUsername());
 
             if (exist) {
-                throw new ConflictException("Nickname já registrado " + registerReqDTO.getUsername());
+                throw new ConflictException("Usuário já registrado " + registerReqDTO.getUsername());
             }
 
         } catch (ConflictException e) {
@@ -67,15 +75,6 @@ public class UserService {
         return userConverter.userDTOList(users);
     }
 
-    public UserDTO filterUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new ConflictException("Usuário não encontrado")
-        );
-
-        return userConverter.userDTO(user);
-    }
-
-
     public List<UserDTO> filterUsers(String name, String username, Long role) {
 
         List<User> users = new ArrayList<User>();
@@ -86,18 +85,18 @@ public class UserService {
             users = userRepository.findByUsernameContainsIgnoreCase(username);
         } else if (role != null) {
             users = userRepository.findByRole(role);
-        } else {
+        }
+
+        if (users.isEmpty()) {
             throw new ConflictException("Nenhum usuário encontrado.");
         }
 
         return userConverter.userDTOList(users);
     }
 
-    public UserDTO deleteUser(Long role, Long id) {
+    public UserDTO deleteUser(Long id) {
 
-        if (role != 1) {
-            throw new ConflictException("Você não tem permissão para excluir usuário");
-        }
+        validateUserAccess(id, "delete");
 
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ConflictException("Usuário não encontrado")
@@ -108,11 +107,35 @@ public class UserService {
         return userConverter.userDTO(user);
     }
 
-    public UserDTO updateUser(Long role, Long id, RegisterReqDTO userDTO) {
+    public void isAdmin(Long role) {
 
         if (role != 1) {
-            throw new ConflictException("Você não tem permissão para editar usuário");
+            throw new ConflictException("Você não tem permissão para excluir este usuário");
         }
+    }
+
+    public void validateUserAccess(Long id, String methodAction) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User userLogged = userRepository.findByUsername(username).orElseThrow(
+                () -> new ConflictException("Usuário logado não encontrado")
+        );
+
+        isAdmin(userLogged.getRole());
+
+        User userToDelete = userRepository.findById(id).orElseThrow(
+                () -> new ConflictException("Usuário não encontrado")
+        );
+
+        if ("delete".equals(methodAction) && userLogged.getUsername().equals(userToDelete.getUsername())) {
+            throw new ConflictException("Não foi possível excluir usuário");
+        }
+    }
+
+    public UserDTO updateUser(Long id, RegisterReqDTO userDTO) {
+
+       validateUserAccess(id, "put");
 
         User userEntity = userRepository.findById(id).orElseThrow(
                 () -> new ConflictException("Usuário não encontrado")
