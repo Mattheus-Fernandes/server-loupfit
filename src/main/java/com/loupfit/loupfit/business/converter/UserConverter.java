@@ -49,6 +49,18 @@ public class UserConverter {
         return LoginResDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
+                .role(user.getRole())
+                .build();
+    }
+
+    public User updateUser(RegisterReqDTO userDTO, User userEntity) {
+        return User.builder()
+                .id(userEntity.getId())
+                .name(userDTO.getName() != null ? userDTO.getName() : userEntity.getName())
+                .lastname(userDTO.getLastname() != null ? userDTO.getLastname() : userEntity.getLastname())
+                .username(userDTO.getUsername() != null ? userDTO.getUsername() : userEntity.getUsername())
+                .password(userDTO.getPassword() != null ? userDTO.getPassword() : userEntity.getPassword())
+                .role(userDTO.getRole() != null ? userDTO.getRole() : userEntity.getRole())
                 .build();
     }
 }

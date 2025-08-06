@@ -5,8 +5,12 @@ import com.loupfit.loupfit.business.dto.LoginReqDTO;
 import com.loupfit.loupfit.business.dto.LoginResDTO;
 import com.loupfit.loupfit.business.dto.RegisterReqDTO;
 import com.loupfit.loupfit.business.dto.UserDTO;
+import com.loupfit.loupfit.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +21,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @PostMapping
     public ResponseEntity<UserDTO> saveUser(@RequestBody RegisterReqDTO registerReqDTO) {
@@ -24,8 +30,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResDTO> loginUser(@RequestBody LoginReqDTO loginReqDTO) {
-        return ResponseEntity.ok(userService.loginUser(loginReqDTO));
+    public String loginUser(@RequestBody LoginReqDTO loginReqDTO) {
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginReqDTO.getUsername(), loginReqDTO.getPassword())
+        );
+
+        return jwtUtil.generateToken(authentication.getName());
     }
 
     @GetMapping
@@ -42,10 +53,18 @@ public class UserController {
         return ResponseEntity.ok(userService.filterUsers(name, username, role));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> findUserById(
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UserDTO> deleteUser(
             @PathVariable Long id
     ) {
-        return ResponseEntity.ok(userService.filterUserById(id));
+        return ResponseEntity.ok(userService.deleteUser(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> updateUser(
+            @PathVariable Long id,
+            @RequestBody RegisterReqDTO userDTO
+    ) {
+        return ResponseEntity.ok(userService.updateUser(id, userDTO));
     }
 }
