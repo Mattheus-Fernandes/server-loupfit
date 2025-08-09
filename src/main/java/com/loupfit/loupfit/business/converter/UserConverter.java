@@ -1,8 +1,8 @@
 package com.loupfit.loupfit.business.converter;
 
-import com.loupfit.loupfit.business.dto.LoginResDTO;
-import com.loupfit.loupfit.business.dto.RegisterReqDTO;
-import com.loupfit.loupfit.business.dto.UserDTO;
+import com.loupfit.loupfit.business.dto.user.LoginResDTO;
+import com.loupfit.loupfit.business.dto.user.RegisterReqDTO;
+import com.loupfit.loupfit.business.dto.user.UserDTO;
 import com.loupfit.loupfit.infrastructure.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
