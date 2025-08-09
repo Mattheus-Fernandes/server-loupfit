@@ -36,7 +36,7 @@ public class StoreItemConverter {
 
         List<StoreItemDTO> storeItemDTOS = new ArrayList<StoreItemDTO>();
 
-        for (StoreItem storeItem: storeItems) {
+        for (StoreItem storeItem : storeItems) {
             storeItemDTOS.add(storeItemDTO(storeItem));
         }
 
@@ -51,6 +51,18 @@ public class StoreItemConverter {
                 .supplier(storeItem.getSupplier())
                 .observation(storeItem.getObservation())
                 .createdBy(storeItem.getCreatedBy().getUsername())
+                .build();
+    }
+
+    public StoreItem updateItem(StoreItemDTO storeItemDTO, StoreItem storeItemEntity) {
+
+        return StoreItem.builder()
+                .id(storeItemEntity.getId())
+                .item(storeItemDTO.getItem() != null ? storeItemDTO.getItem() : storeItemEntity.getItem())
+                .quantity(storeItemDTO.getQuantity() != null ? storeItemDTO.getQuantity() : storeItemEntity.getQuantity())
+                .supplier(storeItemDTO.getSupplier() != null ? storeItemDTO.getSupplier() : storeItemEntity.getSupplier())
+                .observation(storeItemDTO.getObservation() != null ? storeItemDTO.getObservation() : storeItemEntity.getObservation())
+                .createdBy(storeItemEntity.getCreatedBy())
                 .build();
     }
 }

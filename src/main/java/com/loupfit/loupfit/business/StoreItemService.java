@@ -25,6 +25,15 @@ public class StoreItemService {
     private final StoreItemRepository storeItemRepository;
     private final UserRepository userRepository;
 
+    private User getUserLogged() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new ConflictException("Usuário logado não encontrado.")
+        );
+    }
+
     public StoreItemCreateDTO createItem(StoreItemCreateDTO storeItemReqDTO) {
 
         User user = getUserLogged();
@@ -37,16 +46,6 @@ public class StoreItemService {
         newItem.setCreatedBy(user);
 
         return storeItemConverter.storeItemCreateDTO(storeItemRepository.save(newItem));
-    }
-
-
-    private User getUserLogged() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        return userRepository.findByUsername(username).orElseThrow(
-                () -> new ConflictException("Usuário logado não encontrado.")
-        );
     }
 
     public List<StoreItemDTO> findAllStoreItens() {
@@ -77,5 +76,46 @@ public class StoreItemService {
         } catch (NotFoundException e) {
             throw new NotFoundException(e.getMessage());
         }
+    }
+
+    public StoreItemDTO deleteItem(Long id) {
+
+        try {
+            User user = getUserLogged();
+
+            if (user.getRole() != 1) {
+                throw new ConflictException("Você não tem permissão para excluir esse item.");
+            }
+
+            StoreItem item = storeItemRepository.findById(id).orElseThrow(
+                    () -> new ConflictException("Item não encontrado")
+            );
+
+            storeItemRepository.deleteById(id);
+
+            return storeItemConverter.storeItemDTO(item);
+
+
+        } catch (ConflictException e) {
+            throw new ConflictException(e.getMessage());
+        }
+    }
+
+    public StoreItemDTO updateItem(Long id, StoreItemDTO storeItemDTO) {
+
+        User user = getUserLogged();
+
+        if (user.getRole() != 1) {
+            throw new ConflictException("Você não tem permissão para editar esse item.");
+        }
+
+        StoreItem itemEntity = storeItemRepository.findById(id).orElseThrow(
+                () -> new ConflictException("Item não encontrado")
+        );
+
+        StoreItem editItem = storeItemConverter.updateItem(storeItemDTO, itemEntity);
+
+        return storeItemConverter.storeItemDTO(storeItemRepository.save(editItem));
+
     }
 }

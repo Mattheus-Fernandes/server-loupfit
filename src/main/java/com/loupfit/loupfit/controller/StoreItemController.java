@@ -35,4 +35,17 @@ public class StoreItemController {
         return ResponseEntity.ok(storeItemService.filterCreatedBy(createdby, supplier, item));
 
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<StoreItemDTO> deleteItem(@PathVariable Long id) {
+        return ResponseEntity.ok(storeItemService.deleteItem(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StoreItemDTO> updateItem(
+            @PathVariable Long id,
+            @RequestBody StoreItemDTO storeItemDTO) {
+        return ResponseEntity.ok(storeItemService.updateItem(id, storeItemDTO));
+    }
+
 }
