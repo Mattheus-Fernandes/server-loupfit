@@ -1,10 +1,9 @@
 package com.loupfit.loupfit.controller;
 
 import com.loupfit.loupfit.business.UserService;
-import com.loupfit.loupfit.business.dto.LoginReqDTO;
-import com.loupfit.loupfit.business.dto.LoginResDTO;
-import com.loupfit.loupfit.business.dto.RegisterReqDTO;
-import com.loupfit.loupfit.business.dto.UserDTO;
+import com.loupfit.loupfit.business.dto.user.LoginReqDTO;
+import com.loupfit.loupfit.business.dto.user.RegisterReqDTO;
+import com.loupfit.loupfit.business.dto.user.UserDTO;
 import com.loupfit.loupfit.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
