@@ -2,15 +2,20 @@ package com.loupfit.loupfit.business;
 
 import com.loupfit.loupfit.business.converter.SupplierConverter;
 import com.loupfit.loupfit.business.dto.supplier.SupplierCreateDTO;
+import com.loupfit.loupfit.business.dto.supplier.SupplierDTO;
 import com.loupfit.loupfit.infrastructure.entity.Supplier;
 import com.loupfit.loupfit.infrastructure.entity.User;
 import com.loupfit.loupfit.infrastructure.exceptions.ConflictException;
+import com.loupfit.loupfit.infrastructure.exceptions.NotFoundException;
 import com.loupfit.loupfit.infrastructure.repository.SupplierRepository;
 import com.loupfit.loupfit.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -83,5 +88,29 @@ public class SupplierService {
 
                 break;
         }
+    }
+
+    public List<SupplierDTO> findAllSuppliers() {
+        List<Supplier> suppliers = supplierRepository.findAll();
+
+        return supplierConverter.supplierDTOList(suppliers);
+    }
+
+    public List<SupplierDTO> filterSupplier(String fantasyName, String type) {
+
+        List<Supplier> suppliers = new ArrayList<Supplier>();
+
+        if (fantasyName != null && !fantasyName.isEmpty()) {
+            suppliers = supplierRepository.findByFantasyNameContainsIgnoreCase(fantasyName);
+        } else if (type != null && !type.isEmpty()) {
+            suppliers = supplierRepository.findByTypeContainsIgnoreCase(type);
+        }
+
+        if (suppliers.isEmpty()) {
+            throw new NotFoundException("Nenhum fornecedor encontrado.");
+        }
+
+        return supplierConverter.supplierDTOList(suppliers);
+
     }
 }
