@@ -58,4 +58,17 @@ public class SupplierConverter {
                 .phone(supplierCreateDTO.getPhone())
                 .build();
     }
+
+    public Supplier updateSupplier(SupplierDTO supplierDTO, Supplier supplierEntity) {
+        return Supplier.builder()
+                .id(supplierEntity.getId())
+                .fantasyName(supplierDTO.getFantasyName() != null ? supplierDTO.getFantasyName() : supplierEntity.getFantasyName())
+                .type(supplierDTO.getType() != null ? supplierDTO.getFantasyName() : supplierEntity.getType())
+                .linkProfile(supplierDTO.getLinkProfile() != null ? supplierDTO.getLinkProfile() : supplierEntity.getLinkProfile())
+                .email(supplierDTO.getEmail() != null ? supplierDTO.getEmail() : supplierEntity.getEmail())
+                .site(supplierDTO.getSite() != null ? supplierDTO.getSite() : supplierEntity.getSite())
+                .phone(supplierDTO.getPhone() != null ? supplierDTO.getPhone() : supplierEntity.getPhone())
+                .createdBy(supplierEntity.getCreatedBy())
+                .build();
+    }
 }

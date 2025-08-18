@@ -131,7 +131,30 @@ public class SupplierService {
 
             return supplierConverter.supplierDTO(supplier);
 
-        } catch (ConflictException e ) {
+        } catch (ConflictException e) {
+            throw new ConflictException(e.getMessage());
+        }
+    }
+
+    public SupplierDTO updateSupplier(Long id, SupplierDTO supplierDTO) {
+        try {
+
+            User user = getUserLogged();
+
+            if (user.getRole() != 1) {
+                throw new ConflictException("Você não tem permissão para editar o fornecedor.");
+            }
+
+            Supplier supplierEntity = supplierRepository.findById(id).orElseThrow(
+                    () -> new ConflictException("Não foi possível excluir esse fornecedor")
+            );
+
+            Supplier supplierEdit = supplierConverter.updateSupplier(supplierDTO, supplierEntity);
+
+            return supplierConverter.supplierDTO(supplierRepository.save(supplierEdit));
+
+
+        } catch (ConflictException e) {
             throw new ConflictException(e.getMessage());
         }
     }
