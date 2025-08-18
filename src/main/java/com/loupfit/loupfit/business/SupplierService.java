@@ -113,4 +113,26 @@ public class SupplierService {
         return supplierConverter.supplierDTOList(suppliers);
 
     }
+
+    public SupplierDTO deleteSupplier(Long id) {
+        try {
+
+            User user = getUserLogged();
+
+            if (user.getRole() != 1) {
+                throw new ConflictException("Você não tem permissão para excluir fornecedor.");
+            }
+
+            Supplier supplier = supplierRepository.findById(id).orElseThrow(
+                    () -> new ConflictException("Não foi possível excluir esse fornecedor")
+            );
+
+            supplierRepository.deleteById(id);
+
+            return supplierConverter.supplierDTO(supplier);
+
+        } catch (ConflictException e ) {
+            throw new ConflictException(e.getMessage());
+        }
+    }
 }

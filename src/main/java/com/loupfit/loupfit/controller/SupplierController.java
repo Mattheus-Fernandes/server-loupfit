@@ -33,4 +33,10 @@ public class SupplierController {
 
         return ResponseEntity.ok(supplierService.filterSupplier(fantasyName, type));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SupplierDTO> deleteSupplier(@PathVariable Long id) {
+        return ResponseEntity.ok(supplierService.deleteSupplier(id));
+
+    }
 }
